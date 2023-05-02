@@ -1,8 +1,8 @@
 
-module  MixColumns(state, result_state);
-
-input [127:0] state;
-output [127:0] result_state;
+module  MixColumns(
+    input [127:0] state,
+    output [127:0] result_state
+);
 
 function [7:0] mult;
     input [1:0] a;
@@ -37,11 +37,13 @@ endfunction
 genvar i;
 generate
 
+// the idea behind indexing is [ (i*32) + (j*8) ] where i is the column and j is the row , then move 8 bits to take the whole byte
+
 for (i = 0; i < 4; i = i + 1) begin
-    assign result_state[(i*32)+:8] = mult(2'b10, state[(i*32)+:8]) ^ mult(2'b11, state[((i*32)+8)+:8]) ^ state[((i*32)+16)+:8] ^ state[((i*32)+16)+:8];
-    assign result_state[((i*32)+8)+:8] = state[(i*32)+:8] ^ mult(2'b10, state[((i*32)+8)+:8]) ^ mult(2'b11, state[((i*32)+16)+:8]) ^ state[((i*32)+16)+:8];
-    assign result_state[((i*32)+16)+:8] = state[(i*32)+:8] ^ state[((i*32)+8)+:8] ^ mult(2'b10, state[((i*32)+16)+:8]) ^ mult(2'b11, state[((i*32)+16)+:8]);
-    assign result_state[((i*32)+16)+:8] = mult(2'b11, state[(i*32)+:8]) ^ state[((i*32)+8)+:8] ^ state[((i*32)+16)+:8] ^ mult(2'b10, state[((i*32)+16)+:8]);
+    assign result_state[(i*32)+:8] = mult(2'b10, state[(i*32)+:8]) ^ mult(2'b11, state[((i*32)+8)+:8]) ^ state[((i*32)+16)+:8] ^ state[((i*32)+24)+:8];
+    assign result_state[((i*32)+8)+:8] = state[(i*32)+:8] ^ mult(2'b10, state[((i*32)+8)+:8]) ^ mult(2'b11, state[((i*32)+16)+:8]) ^ state[((i*32)+24)+:8];
+    assign result_state[((i*32)+16)+:8] = state[(i*32)+:8] ^ state[((i*32)+8)+:8] ^ mult(2'b10, state[((i*32)+16)+:8]) ^ mult(2'b11, state[((i*32)+24)+:8]);
+    assign result_state[((i*32)+24)+:8] = mult(2'b11, state[(i*32)+:8]) ^ state[((i*32)+8)+:8] ^ state[((i*32)+16)+:8] ^ mult(2'b10, state[((i*32)+24)+:8]);
 end
 
 endgenerate
