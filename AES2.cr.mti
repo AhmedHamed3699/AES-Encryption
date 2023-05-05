@@ -1,0 +1,7 @@
+C:/modeltech64_10.6d/examples/AES-Encryption/ShiftRows.v {0 {vlog -work work -vopt -stats=none C:/modeltech64_10.6d/examples/AES-Encryption/ShiftRows.v
+Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+-- Compiling module ShiftRows
+** Error: C:/modeltech64_10.6d/examples/AES-Encryption/ShiftRows.v(30): Illegal array access into "outMatrix"
+** Error (suppressible): (vlog-2997) C:/modeltech64_10.6d/examples/AES-Encryption/ShiftRows.v(30): Cannot assign a packed type 'reg[31:0]' to an unpacked type 'wire[7:0] $[3:0]'.
+
+} {4.0 5.0} {}}
