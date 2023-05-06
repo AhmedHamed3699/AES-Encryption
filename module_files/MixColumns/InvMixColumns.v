@@ -4,17 +4,63 @@ module  InvMixColumns(
     output [0:127] result_state
 );
 
-function [7:0] mult (input [3:0] a, input [7:0] b);
-    reg [10:0] temp1;
-    reg [10:0] temp2;
-    reg [10:0] temp3;
-    reg [10:0] temp4;
+function [7:0] mult2 (input [7:0] b);
     begin
-        temp1[7:0]  = a[0] & b;
-        temp2[8:1]  = a[1] & b;
-        temp3[9:2]  = a[2] & b;
-        temp4[10:3] = a[3] & b;
-        mult = temp1 + temp2 + temp3 + temp4;
+
+        if(b[7] == 1)
+            mult2 = ((b << 1) ^ 8'h1b);
+        else
+            mult2 = b << 1;
+
+    end
+endfunction
+
+function [7:0] mult (input [3:0] a, input [7:0] b);
+    begin
+        case(a)
+
+            4'h9: begin // (((b × 2) × 2) × 2) + b
+
+                mult = mult2(b);
+                mult = mult2(mult);
+                mult = mult2(mult);
+                mult = mult ^ b;
+
+            end
+
+            4'hb: begin // ((((b × 2) × 2) + b) × 2) + b
+
+                mult = mult2(b);
+                mult = mult2(mult);
+                mult = mult ^ b;
+                mult = mult2(mult);
+                mult = mult ^ b;
+
+            end
+
+            4'hd: begin // ((((b × 2) + b) × 2) × 2) + b
+                
+                mult = mult2(b);
+                mult = mult ^ b;
+                mult = mult2(mult);
+                mult = mult2(mult);
+                mult = mult ^ b;
+
+            end
+
+            4'he: begin // ((((b × 2) + b) × 2) + b) × 2
+
+                mult = mult2(b);
+                mult = mult ^ b;
+                mult = mult2(mult);
+                mult = mult ^ b;
+                mult = mult2(mult);
+
+            end
+
+            default: mult = mult;
+
+        endcase
     end
 endfunction
 
