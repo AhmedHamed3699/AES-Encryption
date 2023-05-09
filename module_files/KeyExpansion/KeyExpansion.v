@@ -4,8 +4,6 @@ input wire [0 : 3] round;
 input wire [0 : (32*nk)-1] key;
 output reg [0 : (32*nk)-1] keyOut;
 
-wire [31:0] w0,w1,w2,w3,g;
-
 function [0:31] RotWord;
     input [0:31] w;
 
@@ -16,7 +14,6 @@ function [0:31] RotWord;
 endfunction
 
 function [0:31] Rcon;
-    input [0:31] w;
     input [0:3] round;
     begin
         case(round)
@@ -40,7 +37,14 @@ function [0:31] Rcon;
     end
 
     always @(*) begin
-        
+        keyOut[0:31] = key[(32*nk)-32 +: 32];
+        keyOut[0:31] = RotWord(keyOut[0:31]);
+        // keyOut[0:31] = subBytes(keyOut[0:31]);
+        keyOut[0:31] = keyOut[0:31] ^ key[0:31] ^ Rcon(round);
+
+        for (i = 1 ; i < nk ; i = i + 1) begin
+            keyOut[(32*i) +: 32] = keyOut[(32*(i-1)) +: 32] ^ key[(32*i) +: 32];
+        end
     end
 
 endfunction
