@@ -1,3 +1,5 @@
+`include "../subBytes/SubBytes.v"
+
 module keyExpansion #(parameter nk = 4, parameter nr = 10)(
     input wire [0 : (32*nk) - 1] key,
     output reg [0 : (128*(nr+1)) - 1] schedule
@@ -14,18 +16,6 @@ function [0:31] RotWord;
     
 endfunction
 
-/*
-function [0:31] subword;
-    input [0:31] a;
-    begin
-        subword[0:7]   = S(a[0:7]);
-        subword[8:15]  = S(a[8:15]);
-        subword[16:23] = S(a[16:23]);
-        subword[24:31] = S(a[24:31]);
-    end
-endfunction
-*/
-
 function [0:31] Rcon;
     input [0:3] round;
     begin
@@ -40,12 +30,6 @@ function [0:31] Rcon;
             4'h8: Rcon = 32'h80_000000;
             4'h9: Rcon = 32'h1b_000000;
             4'ha: Rcon = 32'h36_000000;
-            4'hb: Rcon = 32'h6C_000000;
-            4'hc: Rcon = 32'hD8_000000;
-            4'hd: Rcon = 32'hAB_000000;
-            4'he: Rcon = 32'h4D_000000;
-            4'hf: Rcon = 32'h9A_000000;
-            default: Rcon = 32'h00000000;
         endcase
     end
 endfunction
