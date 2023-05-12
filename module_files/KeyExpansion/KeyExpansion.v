@@ -284,7 +284,7 @@ endfunction
 function [0:31] SubWord;
     input [0:31] word;
     begin
-        SubWord = {SBox(word[0:7]), SBox(word[8:15]), SBox(word[16:23]), SBox(word[24:31])};
+        SubWord = {sbox_byte(word[0:7]), sbox_byte(word[8:15]), sbox_byte(word[16:23]), sbox_byte(word[24:31])};
     end
 endfunction
 
@@ -312,6 +312,7 @@ integer i;
 always @(*) begin
 
     schedule[0 : (32*Nk)-1] = key[0 : (32*Nk)-1];
+
     for (i = Nk; i < 4 * (Nr+1); i = i + 1) begin
         temp = schedule[(i-1)*32 +:32];
         if (i % Nk == 0) begin
