@@ -1,16 +1,15 @@
-module keyExpansion #(parameter nk=4)(
-    input wire [0 : 3] round,
-    input wire [0 : (32*nk)-1] key,
-    output reg [0 : (32*nk)-1] keyOut
+module keyExpansion #(parameter nk = 4, parameter nr = 10)(
+    input wire [0 : (32*nk) - 1] key,
+    output reg [0 : (128*(nr+1)) - 1] schedule
 );
 
 integer i;
 
 function [0:31] RotWord;
-    input [0:31] w;
+    input [0:31] word;
 
     begin
-        RotWord = {w[8:31],w[0:7]};
+        RotWord = {word[8:31],word[0:7]};
     end
     
 endfunction
