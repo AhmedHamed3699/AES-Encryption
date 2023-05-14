@@ -308,7 +308,7 @@ endfunction
 
 reg [0:31] temp;
 integer i;
-
+    
 always @(*) begin
 
     schedule[0 : (32*Nk)-1] = key[0 : (32*Nk)-1];

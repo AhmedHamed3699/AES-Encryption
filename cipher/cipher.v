@@ -38,7 +38,7 @@ generate
       SubBytes Operation1(nextRound_in[Round_no-1], SubBytes_out[Round_no]);
       ShiftRows Operation2(SubBytes_out[Round_no] , ShiftRows_out[Round_no]);
       MixColumns Operation3(ShiftRows_out[Round_no] , MixColumns_out[Round_no]);
-      AddRoundKey Operation4(MixColumns_out[Round_no] , k_sch[128*(11-Round_no)-1-:128], nextRound_in[Round_no]);
+      AddRoundKey Operation4(MixColumns_out[Round_no] , k_sch[128*((Nr+1)-Round_no)-1-:128], nextRound_in[Round_no]);
    end
 
       SubBytes Operation5(nextRound_in[Nr-1] , SubBytes_out[Nr]);
