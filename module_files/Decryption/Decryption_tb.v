@@ -16,7 +16,7 @@ key_in=128'h000102030405060708090a0b0c0d0e0f;
 
 #10
 if(data_decrypted==128'h00112233445566778899aabbccddeeff)
-$display("successfully encrypted");
+$display("successfully decrypted");
 else
 $display("FAILEDDDDDDD");
 
