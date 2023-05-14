@@ -43,8 +43,8 @@ generate
       InvMixColumns Operation4(nextRound_in[Round_no] , InvMixColumns_out[Round_no]);
    end
       InvShiftRows Operation5(InvMixColumns_out[Nr-1] ,InvShiftRows_out[Nr]);
-      InverseSubBytes Operation6(nextRound_in[Nr] , InvSubBytes_out[Nr]);
-      AddRoundKey Operation7(InvShiftRows_out[Nr] ,k_sch[128*(Nr+1)-1 -:128], nextRound_in[Nr]);
+      InverseSubBytes Operation6(InvShiftRows_out[Nr] , InvSubBytes_out[Nr]);
+      AddRoundKey Operation7(InvSubBytes_out[Nr] ,k_sch[128*(Nr+1)-1 -:128], nextRound_in[Nr]);
 
 endgenerate
 

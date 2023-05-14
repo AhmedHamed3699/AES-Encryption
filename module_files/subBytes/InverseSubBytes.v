@@ -1,6 +1,6 @@
-module InverseSubBytes(sub_byte,byte);
+module InverseSubBytes(sub_byte,byte_out);
 input [127:0] sub_byte;
-output [127:0] byte;
+output [127:0] byte_out;
 
 function [7:0] byte;
     input [7:0] sbox_byte;
@@ -268,10 +268,12 @@ function [7:0] byte;
 
 endfunction
 
-parameter i;
+genvar i;
 
-for(i = 0; i < 128; i = i+8) 
-	byte[i +:8] = byte(sub_byte[i +:8])
+generate
+	for(i = 0; i < 128; i = i+8) 
+		assign byte_out[i +:8] = byte(sub_byte[i +:8]);
+endgenerate
 
 
 endmodule

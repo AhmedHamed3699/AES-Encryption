@@ -268,10 +268,12 @@ function [7:0] sbox_byte;
 
 endfunction
 
-integer i;
+genvar i;
 
-for(i = 0; i < 128; i = i+8)  
-	sub_byte[i +:8] = sbox_byte(byte[i +:8])
+generate
+    for(i = 0; i < 128; i = i+8)  
+        assign sub_byte[i +:8] = sbox_byte(byte[i +:8]);
+endgenerate
 
 
 
