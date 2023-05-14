@@ -1,3 +1,4 @@
+`include "cipher.v"
 module SPI_Slave #(parameter Nk = 4 , parameter Nr = 10) (
     input wire clk,
     input wire rst,
@@ -13,12 +14,15 @@ reg [127:0] data_in;
 // output consists of 128 bits of encrypted data
 reg [127:0] data_out;
 
+parameter total_time = 128 + (32*Nk) + 128;
+
 integer i = 0;
 
 always @(posedge clk, posedge rst) begin
     if(rst) begin
         data_in <= 0;
         data_out <= 0;
+        done_load <= 0;
         key <= 0;
         i <= 0;
     end
@@ -32,18 +36,51 @@ always @(posedge clk, posedge rst) begin
                 key <= {key[(32*Nk)-1:0], SDI};
                 i <= i + 1;
             end
-            else begin
-                data_out <= data_in;
-                data_in <= {data_in[127:0], SDI};
-            end
+            else
+                data_out <= data_out;
         end
         else begin
             data_in <= 0;
             data_out <= 0;
+            done_load <= 0;
             key <= 0;
             i <= 0;
         end
     end
 end
+
+always @(negedge clk, posedge rst) begin
+    if(rst) begin
+        data_in <= 0;
+        data_out <= 0;
+        done_load <= 0;
+        key <= 0;
+        i <= 0;
+    end
+    else begin
+        if(!CS) begin
+            if(i >= total_time - 128) begin
+                SDO <= data_out[total_time - i - 1];
+                i <= i + 1;
+            end
+            else begin
+                data_out <= data_out;
+            end
+        end
+        else begin
+            data_in <= 0;
+            data_out <= 0;
+            done_load <= 0;
+            key <= 0;
+            i <= 0;
+        end
+    end
+end
+
+cipher cipher_inst(
+    .data_in(data_in),
+    .key_in(key),
+    .data_encrypted(data_out)
+);  
     
 endmodule
