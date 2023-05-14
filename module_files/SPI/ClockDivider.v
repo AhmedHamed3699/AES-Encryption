@@ -1,14 +1,14 @@
-module moduleName #(parameter divNo=50) (
+module ClockDivider  (
     input master_clk,
-    output reg [divNO-1:0] divide_clk
+    output wire divide_clk
 );
 
+integer counter=0;
 
-always @(divNO) begin
-    if(divNo==1'1b1)
-        divide_clk<=divNO'b1;
-    else
-        divide_clk<=divNO'b0;    
+always @(master_clk) begin
+    if(counter==50)begin
+        
+    end
 end
 
 endmodule

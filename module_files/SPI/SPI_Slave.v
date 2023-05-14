@@ -3,7 +3,7 @@ module SPI_Slave #(parameter Nk = 4 , parameter Nr = 10) (
     input wire clk,
     input wire rst,
     input wire SDI,
-    output wire SDO,
+    output reg SDO,
     input wire CS
 );
 
@@ -13,16 +13,17 @@ reg [127:0] data_in;
 
 // output consists of 128 bits of encrypted data
 reg [127:0] data_out;
+wire [127:0] data_wire;
 
 parameter total_time = 128 + (32*Nk) + 128;
 
 integer i = 0;
 
 always @(posedge clk, posedge rst) begin
+   data_out<=data_wire;
     if(rst) begin
         data_in <= 0;
         data_out <= 0;
-        done_load <= 0;
         key <= 0;
         i <= 0;
     end
@@ -42,7 +43,6 @@ always @(posedge clk, posedge rst) begin
         else begin
             data_in <= 0;
             data_out <= 0;
-            done_load <= 0;
             key <= 0;
             i <= 0;
         end
@@ -50,10 +50,10 @@ always @(posedge clk, posedge rst) begin
 end
 
 always @(negedge clk, posedge rst) begin
+   data_out<=data_wire;
     if(rst) begin
         data_in <= 0;
         data_out <= 0;
-        done_load <= 0;
         key <= 0;
         i <= 0;
     end
@@ -70,7 +70,6 @@ always @(negedge clk, posedge rst) begin
         else begin
             data_in <= 0;
             data_out <= 0;
-            done_load <= 0;
             key <= 0;
             i <= 0;
         end
@@ -80,7 +79,7 @@ end
 cipher cipher_inst(
     .data_in(data_in),
     .key_in(key),
-    .data_encrypted(data_out)
+    .data_encrypted(data_wire)
 );  
     
 endmodule
