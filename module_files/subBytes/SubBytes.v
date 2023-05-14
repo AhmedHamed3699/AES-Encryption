@@ -1,5 +1,5 @@
 `include "SBox.v"
-module SubBytes(byte,sub_byte);
+module SubBytes (byte,sub_byte);
 input [127:0] byte;
 output [127:0] sub_byte;
 
