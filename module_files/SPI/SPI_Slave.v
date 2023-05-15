@@ -27,6 +27,7 @@ always @(posedge clk, posedge rst) begin
         data_in <= 0;
         data_out <= 0;
         key <= 0;
+        SDO_state <= 0;
     end
     else begin
         SDO_state <= SDO_next;
@@ -45,6 +46,7 @@ always @(negedge clk, posedge rst) begin
         data_in <= 0;
         data_out <= 0;
         key <= 0;
+        SDO_state <= 0;
         i = 0;
         j = 0;
     end
@@ -70,7 +72,7 @@ always @(negedge clk, posedge rst) begin
         end
         else begin
             data_in <= 0;
-            data_out <= 0;
+            data_out = data_wire;
             key <= 0;
             i = 0;
             j = 0;
