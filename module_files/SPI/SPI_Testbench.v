@@ -19,9 +19,11 @@ always @(*) begin
   #2  clk_master<= ~clk_master;
   if(done_out)begin
     if(data_out==128'h69c4e0d86a7b0430d8cdb78070b4c55a)
-    $display("successfully encrypted");
+     $display("successfully encrypted");
     else
-    $display("FAILEDDDDDDD");
+      $display("FAILEDDDDDDD");
+    
+    $finish;  
   end
 end
 
