@@ -2,8 +2,8 @@
 `include "SPI_Master.v"
 module SPI_Testbench ();
 
-parameter Nk=4;
-parameter Nr=10;
+parameter Nk=8;
+parameter Nr=Nk+6;
 reg sel_encrypt;
 reg sel_decrypt;
 reg clk_master;
@@ -14,13 +14,12 @@ reg [Nk*32-1:0]key;
 wire done_out;
 wire [127:0] data_out;
 
-//master m(sel_encrypt , sel_decrypt , clk_master , rst , data_in , key , done_out , data_out);
-SPI_Master SM(sel_encrypt , sel_decrypt , clk_master , rst , data_in , key , done_out , data_out);
+SPI_Master #(Nk,Nr) SM(sel_encrypt , sel_decrypt , clk_master , rst , data_in , key , done_out , data_out);
 
 always @(*) begin
   #5  clk_master <= ~clk_master;
   if(done_out)begin
-    if(data_out==128'h69c4e0d86a7b0430d8cdb78070b4c55a)
+    if(data_out==128'h8ea2b7ca516745bfeafc49904b496089)
      $display("successfully encrypted");
     else
       $display("FAILEDDDDDDD");
@@ -35,7 +34,7 @@ initial begin
     sel_decrypt=1;
     clk_master=0;
     data_in=128'h00112233445566778899aabbccddeeff;
-    key=128'h000102030405060708090a0b0c0d0e0f;
+    key=256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
 #20 
   rst=0;
 end

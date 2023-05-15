@@ -12,7 +12,8 @@ output [127:0] data_out
 );
 
 //elements passed to slave
-wire MISO;
+wire MISO_Enc;
+wire MISO_Dec;
 reg MOSI_reg;
 reg MOSI_next;
 reg CS_enc_reg;
@@ -31,26 +32,16 @@ integer j = 0;
 //ClockDivider C(clk_master , clk_master); 
 
 //calling cipher slave
-SPI_Slave Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_enc_reg));
+SPI_Slave #(Nk,Nr,1) Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Enc), .CS(CS_enc_reg));
 
 //calling inverse cipher slave
-//SPI_Slave Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_dec_reg));
+SPI_Slave #(Nk,Nr,0) Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Dec), .CS(CS_dec_reg));
 
 always @(posedge clk, posedge rst) begin
     
-     //reset case
-    if(rst)begin
-        data_out_reg <= 0;
-        done_out <= 0;
-        MOSI_reg <= 0;
-        CS_enc_next <= 1;
-        CS_dec_next <= 1;
-    end
-    else begin
-        MOSI_reg <= MOSI_next;
-        CS_enc_reg <= CS_enc_next;
-        CS_dec_reg <= CS_dec_next;
-    end
+    MOSI_reg <= MOSI_next;
+    CS_enc_reg <= CS_enc_next;
+    CS_dec_reg <= CS_dec_next;
        
 end
 
@@ -75,12 +66,20 @@ always @(negedge clk, posedge rst) begin
             i = i + 1;
         end
         else begin
-            if (j < 3) begin
+            if (j < 4) begin
                 MOSI_next = 0;
                 j = j + 1;
             end
-            else if(j < 131) begin
-                data_out_reg = {data_out_reg[127:0], MISO};
+            else if(j < 132) begin
+                if(!CS_enc_reg) begin
+                    data_out_reg = {data_out_reg[127:0], MISO_Enc};
+                end
+                else if(!CS_dec_reg) begin
+                    data_out_reg = {data_out_reg[127:0], MISO_Dec};
+                end
+                else begin
+                    data_out_reg = data_out_reg;
+                end
                 j = j + 1;
             end
             else begin
