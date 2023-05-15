@@ -73,7 +73,7 @@ always @(negedge clk_master or posedge rst) begin
         end
 
         //in recieving mode
-        else if(done_sending==1'b1 && i>=0) begin
+        else if(done_sending==1'b1 && i>=-1) begin
             
             data_next<={data_next[126:0] , MISO};
             i=i-1;

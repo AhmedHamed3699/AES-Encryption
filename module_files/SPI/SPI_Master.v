@@ -79,7 +79,7 @@ always @(negedge clk, posedge rst) begin
                 MOSI_next = 0;
                 j = j + 1;
             end
-            else if(j < 128) begin
+            else if(j < 131) begin
                 data_out_reg = {data_out_reg[127:0], MISO};
                 j = j + 1;
             end
