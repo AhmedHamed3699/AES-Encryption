@@ -1,6 +1,6 @@
 `include "SPI_Slave.v"
 `include "ClockDivider.v"
-module master #(parameter Nk=4 , parameter Nr=10)(
+module SPI_Master #(parameter Nk=4 , parameter Nr=10)(
 input sel_encrypt,
 input sel_decrypt,
 input clk,
@@ -12,6 +12,7 @@ output [127:0] data_out
 );
 
 //elements passed to slave
+wire MISO;
 reg MOSI_reg;
 reg MOSI_next;
 reg MISO_reg;
@@ -32,10 +33,10 @@ integer j = 0;
 //ClockDivider C(clk_master , clk_master); 
 
 //calling cipher slave
-SPI_Slave Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_next), .CS(CS_enc_reg));
+SPI_Slave Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_enc_reg));
 
 //calling inverse cipher slave
-//SPI_Slave Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_next), .CS(CS_dec_reg));
+//SPI_Slave Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_dec_reg));
 
 always @(posedge clk, posedge rst) begin
     
@@ -87,7 +88,8 @@ always @(negedge clk, posedge rst) begin
         end
         else begin
             if(j < 128) begin
-                data_out_reg <= {data_out_reg[127:0], MISO_reg};
+                MISO_next = MISO;
+                data_out_reg = {data_out_reg[127:0], MISO_reg};
                 j = j + 1;
             end
             else begin
