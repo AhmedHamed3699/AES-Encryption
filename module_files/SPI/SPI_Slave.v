@@ -54,10 +54,13 @@ always @(negedge clk, posedge rst) begin
                 key <= {key[(32*Nk)-1:0], SDI_state};
                 i = i + 1;
             end
-            else begin
+            else if (j < 128) begin
                 data_out = data_wire;
                 SDO = SDO_state;
                 j = j + 1;
+            end
+            else begin
+                data_out = data_wire;
             end
         end
         else begin
