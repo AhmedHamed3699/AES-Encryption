@@ -29,8 +29,8 @@ end
 
 initial begin
     rst=1;
-    sel_encrypt=1;
-    sel_decrypt=0;
+    sel_encrypt=0;
+    sel_decrypt=1;
     clk_master=0;
     data_in=128'h00112233445566778899aabbccddeeff;
     key=128'h000102030405060708090a0b0c0d0e0f;
