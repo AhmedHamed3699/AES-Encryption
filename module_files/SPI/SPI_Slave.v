@@ -44,7 +44,7 @@ always @(negedge clk, posedge rst) begin
         j = 0;
     end
     else begin
-        CS_next = CS;
+        CS_next<= CS;
         if(!CS_state) begin
             if(i < 128)begin
                 data_in <= {data_in[127:0], SDI_state};
