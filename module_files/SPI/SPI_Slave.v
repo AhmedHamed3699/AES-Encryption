@@ -1,4 +1,4 @@
-`include "cipher.v"
+`include "Encryption.v"
 module SPI_Slave #(parameter Nk = 4 , parameter Nr = 10) (
     input wire clk,
     input wire rst,
@@ -78,7 +78,7 @@ always @(negedge clk, posedge rst) begin
     end
 end
 
-cipher cipher_inst(
+Encryption Enc(
     .data_in(data_in),
     .key_in(key),
     .data_encrypted(data_wire)

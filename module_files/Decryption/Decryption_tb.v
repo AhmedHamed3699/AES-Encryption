@@ -1,5 +1,5 @@
 `include "Decryption.v"
-module DecryptionTestBench ();
+module Decryption_tb ();
 
 parameter Nk=4;
 parameter Nr=Nk+6;

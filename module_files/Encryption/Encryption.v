@@ -3,7 +3,7 @@
 `include "AddRoundKey.v"
 `include "ShiftRows.v"
 `include "SubBytes.v"
-module cipher #(parameter Nk =4 , parameter Nr=10)(
+module Encryption #(parameter Nk =4 , parameter Nr=10)(
    input [127:0] data_in,
    input [Nk*32-1:0] key_in,
    output [127:0] data_encrypted
