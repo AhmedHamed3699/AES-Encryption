@@ -1,6 +1,6 @@
 `include "SPI_Slave.v"
 `include "ClockDivider.v"
-module master #(parameter Nk=4 , parameter Nr=10)(
+module SPI_Master #(parameter Nk=4 , parameter Nr=10)(
 input sel_encrypt,
 input sel_decrypt,
 input clk,
@@ -15,85 +15,84 @@ output [127:0] data_out
 wire MISO;
 reg MOSI_reg;
 reg MOSI_next;
-reg MISO_reg;
-reg MISO_next;
-wire [(128+Nk*32)-1:0]data_bus;
-
-//wire of inputs locally used
-reg [127:0] data_reg;
-reg [127:0] data_next;
+reg CS_enc_reg;
+reg CS_enc_next;
+reg CS_dec_reg;
+reg CS_dec_next;
+reg [127:0]data_out_reg;
+wire [0:(128+Nk*32)-1]data_bus;
 
 
 //counts the next
-integer i;
+integer i = 0;
+integer j = 0;
 
 //calling clock divider module
 //ClockDivider C(clk_master , clk_master); 
 
 //calling cipher slave
-SPI_Slave s1( .clk(clk_master) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(sel_encrypt));
+SPI_Slave Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_enc_reg));
 
 //calling inverse cipher slave
-//InvCipher_slave s2( .clk(clk_master) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(sel_decrypt));
+//SPI_Slave Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO), .CS(CS_dec_reg));
 
-always @(negedge clk_master or posedge rst) begin
+always @(posedge clk, posedge rst) begin
     
-    //reset case
-    if(rst==1'b1)begin
-        data_reg<=128'h0;
-        done_out<=1'b0;
-        done_sending=1'b0;
-        i=128+Nk*32;
-        MOSI_reg<=1'bx;
+     //reset case
+    if(rst)begin
+        data_out_reg <= 0;
+        done_out <= 0;
+        MOSI_reg <= 0;
+        CS_enc_next <= 1;
+        CS_dec_next <= 1;
     end
-
-    
-    else begin   
-
-        //updating sending reg
-        MOSI_reg<=MOSI_next;
-
-        //in recieving mode-updating next
-        if(done_sending==1'b1 && i>=0) begin
-
-            data_next<={data_reg[126:0] , MISO};
-            i=i-1;
-        end
-        
-        //finished recieving
-        else if(done_sending==1'b1 && i<0)
-            done_out<=1'b1;
-
-        //not in recieving mode
-        else begin
-            data_next<=128'b0;
-        end
+    else begin
+        MOSI_reg <= MOSI_next;
+        CS_enc_reg <= CS_enc_next;
+        CS_dec_reg <= CS_dec_next;
     end
-
-end
-
-
-always @(posedge clk_master) begin
-    
-    //in sending mode-updating next
-    if(done_sending==1'b0 && i>=0)begin
-        MOSI_next<=data_bus[i];
-        i=i-1;
-    end
-
-    //finished sending
-    else if(done_sending==1'b0 && i<0)begin
-        MOSI_next<=1'bx;
-        done_sending<=1'b1;
-        i=128+Nk*32;
-    end
-
-    //in receiving mode-updating reg
-    else
-        data_reg<= data_next;
        
 end
 
-assign data_out=data_reg;
-assign data_bus={data_in , key};
+always @(negedge clk, posedge rst) begin
+    
+    //reset case
+    if(rst)begin
+        data_out_reg <= 0;
+        done_out <= 0;
+        MOSI_reg <= 0;
+        CS_enc_next <= 1;
+        CS_dec_next <= 1;
+        i = 0;
+        j = 0;
+    end
+    else begin  
+
+        CS_enc_next = sel_encrypt;
+        CS_dec_next = sel_decrypt;
+        if(i < (128+Nk*32))begin
+            MOSI_next = data_bus[i];
+            i = i + 1;
+        end
+        else begin
+            if (j < 3) begin
+                MOSI_next = 0;
+                j = j + 1;
+            end
+            else if(j < 128) begin
+                data_out_reg = {data_out_reg[127:0], MISO};
+                j = j + 1;
+            end
+            else begin
+                done_out <= 1;
+                CS_enc_next = 1;
+                CS_dec_next = 1;
+            end
+        end
+    end
+end
+
+assign data_bus = {data_in , key};
+assign data_out = data_out_reg;
+
 endmodule
