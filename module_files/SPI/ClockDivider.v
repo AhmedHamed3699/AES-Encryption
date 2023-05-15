@@ -1,14 +1,22 @@
-module ClockDivider  (
+module ClockDivider #(parameter step=50) 
+(
     input master_clk,
-    output wire divide_clk
+    output reg divide_clk
 );
 
 integer counter=0;
+wire en;
+assign en = 0;
+always @(posedge master_clk) begin
+    if(counter == 0 && !en)
+    divide_clk = 0;
 
-always @(master_clk) begin
-    if(counter==50)begin
-        
+    if(counter == 50)
+    begin
+        divide_clk<= ~divide_clk;
+        counter=0;
     end
+    counter=counter+1;
 end
 
 endmodule

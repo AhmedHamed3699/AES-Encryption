@@ -13,6 +13,7 @@ module Wrapper #(parameter Nk =4 , parameter Nr=10)
 // Parameteres passed to (Encryption Module)
 wire [127:0] data_encrypted; 
 
+
 Encryption  #(Nk,Nr) encrypt_me
 (
 .data_in(data_in_encrypt),
