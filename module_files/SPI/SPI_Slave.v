@@ -12,66 +12,68 @@ reg [(32*Nk)-1:0] key;
 reg [127:0] data_in;
 
 // output consists of 128 bits of encrypted data
-reg [127:0] data_out;
-wire [127:0] data_wire;
+reg [0:127] data_out;
+wire [0:127] data_wire;
+
+reg SDO_state;
+reg SDO_next;
+reg SDI_state;
+reg SDI_next;
+reg CS_state;
+reg CS_next;
+
+always @(posedge clk, posedge rst) begin
+    if (rst) begin
+        data_in <= 0;
+        data_out <= 0;
+        key <= 0;
+    end
+    else begin
+        SDO_state <= SDO_next;
+        SDI_state <= SDI_next;
+        CS_state <= CS_next;
+    end
+end
 
 parameter total_time = 128 + (32*Nk) + 128;
 
 integer i = 0;
-
-always @(posedge clk, posedge rst) begin
-   data_out<=data_wire;
-    if(rst) begin
-        data_in <= 0;
-        data_out <= 0;
-        key <= 0;
-        i <= 0;
-    end
-    else begin
-        if(!CS) begin
-            if(i < 128)begin
-                data_in <= {data_in[127:0], SDI};
-                i <= i + 1;
-            end
-            else if(i < (128 + (32*Nk))) begin
-                key <= {key[(32*Nk)-1:0], SDI};
-                i <= i + 1;
-            end
-            else
-                data_out <= data_out;
-        end
-        else begin
-            data_in <= 0;
-            data_out <= 0;
-            key <= 0;
-            i <= 0;
-        end
-    end
-end
+integer j = 0;
 
 always @(negedge clk, posedge rst) begin
-   data_out<=data_wire;
     if(rst) begin
         data_in <= 0;
         data_out <= 0;
         key <= 0;
-        i <= 0;
+        i = 0;
+        j = 0;
     end
     else begin
-        if(!CS) begin
-            if(i >= total_time - 128) begin
-                SDO <= data_out[total_time - i - 1];
-                i <= i + 1;
+        CS_next = CS;
+        if(!CS_state) begin
+            if(i < 128)begin
+                data_in <= {data_in[127:0], SDI_state};
+                SDI_next = SDI;
+                i = i + 1;
+            end
+            else if(i < (128 + (32*Nk))) begin
+                key <= {key[(32*Nk)-1:0], SDI_state};
+                SDI_next = SDI;
+                i = i + 1;
             end
             else begin
-                data_out <= data_out;
+                data_out = data_wire;
+                SDO = SDO_state;
+                SDO_next = data_out[j];
+                j = j + 1;
             end
         end
         else begin
             data_in <= 0;
             data_out <= 0;
             key <= 0;
-            i <= 0;
+            i = 0;
+            j = 0;
         end
     end
 end
