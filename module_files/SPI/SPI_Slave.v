@@ -21,18 +21,15 @@ wire [0:127] data_decrypted;
 
 reg SDO_state;
 reg SDI_state;
-reg CS_state;
-reg CS_next;
 
 integer i = 0;
 integer j = 0;
 
 always @(posedge clk, posedge rst) begin
 
-    if(!CS_next) begin
+    if(!CS) begin
         SDO_state = data_out[j];
-        SDI_state = SDI;
-        CS_state = CS_next; 
+        SDI_state = SDI; 
     end
 
 end
@@ -43,22 +40,20 @@ always @(negedge clk, posedge rst) begin
         data_out <= 0;
         key <= 0;
         SDO_state <= 0;
-        CS_next <= 1;
         i = 0;
         j = 0;
     end
     else begin
-        CS_next = CS;
-        if(!CS_state) begin
-            if(i < 128)begin
+        if(!CS) begin
+            if(i < 130)begin
                 data_in = {data_in[127:0], SDI_state};
                 i = i + 1;
             end
-            else if(i < (128 + (32*Nk))) begin
+            else if(i < (130 + (32*Nk))) begin
                 key = {key[(32*Nk)-1:0], SDI_state};
                 i = i + 1;
             end
-            else if (i == (128 + (32*Nk))) begin
+            else if (i == (130 + (32*Nk))) begin
                 if(E_D == 1) begin
                     data_out = data_encrypted;
                 end
