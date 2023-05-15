@@ -15,8 +15,6 @@ output [127:0] data_out
 wire MISO;
 reg MOSI_reg;
 reg MOSI_next;
-reg MISO_reg;
-reg MISO_next;
 reg CS_enc_reg;
 reg CS_enc_next;
 reg CS_dec_reg;
@@ -45,11 +43,11 @@ always @(posedge clk, posedge rst) begin
         data_out_reg <= 0;
         done_out <= 0;
         MOSI_reg <= 0;
-        MISO_reg <= 0;
+        CS_enc_next <= 1;
+        CS_dec_next <= 1;
     end
     else begin
         MOSI_reg <= MOSI_next;
-        MISO_reg <= MISO_next;
         CS_enc_reg <= CS_enc_next;
         CS_dec_reg <= CS_dec_next;
     end
@@ -63,33 +61,26 @@ always @(negedge clk, posedge rst) begin
         data_out_reg <= 0;
         done_out <= 0;
         MOSI_reg <= 0;
-        MISO_reg <= 0;
+        CS_enc_next <= 1;
+        CS_dec_next <= 1;
         i = 0;
         j = 0;
     end
-    else begin   
+    else begin  
 
-        if(sel_encrypt)begin
-            CS_enc_next = 0;
-            CS_dec_next = 1;
-        end
-        else if(sel_decrypt)begin
-            CS_enc_next = 1;
-            CS_dec_next = 0;
-        end
-        else begin
-            CS_enc_next = 1;
-            CS_dec_next = 1;
-        end
-
+        CS_enc_next = sel_encrypt;
+        CS_dec_next = sel_decrypt;
         if(i < (128+Nk*32))begin
             MOSI_next = data_bus[i];
             i = i + 1;
         end
         else begin
-            if(j < 128) begin
-                MISO_next = MISO;
-                data_out_reg = {data_out_reg[127:0], MISO_reg};
+            if (j < 3) begin
+                MOSI_next = 0;
+                j = j + 1;
+            end
+            else if(j < 128) begin
+                data_out_reg = {data_out_reg[127:0], MISO};
                 j = j + 1;
             end
             else begin
