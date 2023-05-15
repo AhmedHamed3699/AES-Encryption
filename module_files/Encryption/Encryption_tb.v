@@ -1,5 +1,5 @@
-`include "cipher.v"
-module cipherTestbench ();
+`include "Encryption.v"
+module Encryption_tb ();
 
 parameter Nk=4;
 parameter Nr=Nk+6;
@@ -7,7 +7,7 @@ reg [127:0] data_in;
 reg [Nk*32-1:0] key_in;
 wire [127:0] data_encrypted;
 
-cipher #(Nk ,Nr) c(data_in , key_in , data_encrypted);
+Encryption #(Nk ,Nr) E(data_in , key_in , data_encrypted);
 
 initial begin
 
