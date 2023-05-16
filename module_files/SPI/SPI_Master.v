@@ -11,10 +11,10 @@ output reg done_out_Dec,
 output [127:0] data_out
 );
 
-//states of Nk_val
-parameter Nk_4=2'b00;
-parameter Nk_6=2'b01;
-parameter Nk_8=2'b10;
+    //states of Nk_val
+    parameter Nk_4=2'b00;
+    parameter Nk_6=2'b01;
+    parameter Nk_8=2'b10;
 
 integer Nk;
 

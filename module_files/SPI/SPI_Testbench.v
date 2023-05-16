@@ -20,12 +20,12 @@ end
 
 always @(*) begin
   if(done_out_Enc)begin
-      if(data_out == 128'h8ea2b7ca516745bfeafc49904b496089)
+      if(data_out == 128'hdda97ca4864cdfe06eaf70a0ec0d7191)
         $display("successfully encrypted");
       else
         $display("failed encryption");
 
-      data_in = 128'h8ea2b7ca516745bfeafc49904b496089;
+      data_in = 128'hdda97ca4864cdfe06eaf70a0ec0d7191;
   end
   if (done_out_Dec) begin
 
@@ -41,8 +41,8 @@ initial begin
     rst=1;
     clk_master=0;
     data_in=128'h00112233445566778899aabbccddeeff;
-    key=256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
-    Nk_val=2'b10;
+    key=256'h000102030405060708090a0b0c0d0e0f1011121314151617;
+    Nk_val=2'b01;  
 #20 
   rst=0;
 end
