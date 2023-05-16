@@ -41,8 +41,6 @@ end
 always @(negedge clk, posedge rst) begin
 
 
-    done_out_Enc = 0;
-    done_out_Dec = 0;
 
     
     //reset case
@@ -58,6 +56,8 @@ always @(negedge clk, posedge rst) begin
         j = 0;
     end
     else begin  
+        done_out_Enc = 0;
+        done_out_Dec = 0;
         if(i < 128)begin
             MOSI_next = data_in[i];
             i = i + 1;

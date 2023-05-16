@@ -27,10 +27,8 @@ integer j = 0;
 
 always @(posedge clk, posedge rst) begin
 
-    if(!CS) begin
-        SDO_state = data_out[j];
-        SDI_state = SDI; 
-    end
+    SDO_state = data_out[j];
+    SDI_state = SDI; 
 
 end
 
