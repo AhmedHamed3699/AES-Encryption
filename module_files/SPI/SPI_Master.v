@@ -1,14 +1,22 @@
 `include "SPI_Slave.v"
 `include "ClockDivider.v"
-module SPI_Master #(parameter Nk=4 , parameter Nr=10)(
+module SPI_Master (
+input [1:0] Nk_val,
 input clk_master,
 input rst,
 input [0:127] data_in,
-input [0:Nk*32-1]key,   
+input [0:255]key,   
 output reg done_out_Enc,
 output reg done_out_Dec,
 output [127:0] data_out
 );
+
+//states of Nk_val
+parameter Nk_4=2'b00;
+parameter Nk_6=2'b01;
+parameter Nk_8=2'b10;
+
+integer Nk;
 
 //elements passed to slave
 wire clk;
@@ -26,20 +34,30 @@ integer i = 0;
 integer ik = 0;
 integer j = 0;
 
+
+
+
 //calling clock divider module
 ClockDivider C(clk_master , clk); 
 
 //calling cipher slave
-SPI_Slave #(Nk,Nr,1) Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Enc), .CS(CS_enc));
+SPI_Slave #(1) Enc_s( .Nk_val(Nk_val), .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Enc), .CS(CS_enc));
 
 //calling inverse cipher slave
-SPI_Slave #(Nk,Nr,0) Dec_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Dec), .CS(CS_dec));
+SPI_Slave #(0) Dec_s( .Nk_val(Nk_val) , .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Dec), .CS(CS_dec));
 
 always @(posedge clk) begin
     MOSI_reg <= MOSI_next;
 end
 
 always @(negedge clk, posedge rst) begin
+   
+    if(Nk_val==Nk_4)
+        Nk=4;
+    else if(Nk_val==Nk_6)
+        Nk=6;
+    else 
+        Nk=8;  
 
     if (done_out_Enc) begin
         done_out_Enc = 0;
@@ -48,7 +66,6 @@ always @(negedge clk, posedge rst) begin
         done_out_Dec = 0;
         data_out_reg = 0;
     end
-
     
     //reset case
     if(rst)begin
@@ -60,15 +77,25 @@ always @(negedge clk, posedge rst) begin
         CS_enc = 0;
         CS_dec = 1;
         i = 0;
-        ik = 0;
+        ik = 0;  
         j = 0;
     end
+
     else begin  
         if(i < 128)begin
             MOSI_next = data_in[i];
             i = i + 1;
+        /*    if(i==0)begin
+                if(Nk==4)
+                    ik = 128;
+                else if(Nk==6)
+                    ik = 64;  
+                else 
+                    ik = 0;       
+            end
+            */
         end
-        else if (ik < Nk*32) begin
+        else if (ik < 256) begin
             MOSI_next = key[ik];
             ik = ik + 1;   
         end
@@ -113,5 +140,6 @@ end
 assign data_bus = {data_in , key};
 
 assign data_out = data_out_reg;      
+  
 
-endmodule
+endmodule 

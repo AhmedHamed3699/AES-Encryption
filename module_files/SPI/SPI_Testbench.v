@@ -2,18 +2,17 @@
 `include "SPI_Master.v"
 module SPI_Testbench ();
 
-parameter Nk=8;
-parameter Nr=Nk+6;
+reg [1:0] Nk_val;
 reg clk_master;
 reg rst;
 reg [127:0] data_in;
-reg [Nk*32-1:0]key;
+reg [255:0]key;
 
 wire done_out_Enc;
 wire done_out_Dec;
 wire [127:0] data_out;
 
-SPI_Master #(Nk,Nr) SM(clk_master , rst , data_in , key , done_out_Enc , done_out_Dec , data_out);
+SPI_Master SM(Nk_val , clk_master , rst , data_in , key , done_out_Enc , done_out_Dec , data_out);
 
 always @(*) begin
     #5  clk_master <= ~clk_master;
@@ -43,6 +42,7 @@ initial begin
     clk_master=0;
     data_in=128'h00112233445566778899aabbccddeeff;
     key=256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
+    Nk_val=2'b10;
 #20 
   rst=0;
 end
