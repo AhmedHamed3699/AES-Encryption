@@ -40,6 +40,7 @@ always @(negedge clk, posedge rst) begin
         data_out <= 0;
         key <= 0;
         SDO_state <= 0;
+        SDI_state <= 0;
         i = 0;
         j = 0;
     end
@@ -74,6 +75,8 @@ always @(negedge clk, posedge rst) begin
             data_in <= 0;
             data_out <= 0;
             key <= 0;
+            SDO_state <= 0;
+            SDI_state <= 0;
             i = 0;
             j = 0;
         end

@@ -1,36 +1,18 @@
 `include"Encryption.v"
 `include"Decryption.v"
+`include "SPI_Master.v"
 module Wrapper #(parameter Nk =4 , parameter Nr=10)
 (
-    // input clk,
-    // input reset,
+    input clk,
+    input reset,
     input [127:0] data_in_encrypt,
     input [Nk*32-1:0] key_in,
     output reg wrapper_out_encrypt,
     output reg wrapper_out_decrypt
 );
 
-// Parameteres passed to (Encryption Module)
-wire [127:0] data_encrypted; 
+SPI_Master #(Nk,Nr) SM(clk , reset , data_in_encrypt , key_in , done_out_Enc , done_out_Dec , data_out);
 
-
-Encryption  #(Nk,Nr) encrypt_me
-(
-.data_in(data_in_encrypt),
-.key_in(key_in),
-.data_encrypted(data_encrypted)
-);
-
-// Parameteres passed to (Decryption Module)
-wire [127:0] data_decrypted; 
-
-
-Decryption  #(Nk,Nr)decrypt_me
-(
-.data_in(data_encrypted),
-.key_in(key_in),
-.data_decrypted(data_decrypted)
-);
 
 always@*
 begin
@@ -58,5 +40,24 @@ begin
     else
     wrapper_out_decrypt<=1'b0;
 end
+
+always @(*) begin
+  if(done_out_Enc)begin
+      if(data_out == 128'h8ea2b7ca516745bfeafc49904b496089)
+        $display("successfully encrypted");
+      else
+        $display("failed encryption");
+
+      data_in = 128'h8ea2b7ca516745bfeafc49904b496089;
+  end
+  if (done_out_Dec) begin
+
+      if(data_out == 128'h00112233445566778899aabbccddeeff)
+        $display("successfully decrypted");
+      else
+        $display("failed decryption");
+      $finish;  
+  end
+  end
 
 endmodule
