@@ -13,8 +13,6 @@ wire done_out_Enc;
 wire done_out_Dec;
 wire [127:0] data_out;
 
-integer stop = 1;
-
 SPI_Master #(Nk,Nr) SM(clk_master , rst , data_in , key , done_out_Enc , done_out_Dec , data_out);
 
 always @(*) begin
@@ -36,7 +34,6 @@ always @(*) begin
         $display("successfully decrypted");
       else
         $display("failed decryption");
-      
       $finish;  
   end
   end

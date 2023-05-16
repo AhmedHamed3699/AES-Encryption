@@ -43,14 +43,20 @@ always @(negedge clk, posedge rst) begin
     if (done_out_Enc) begin
         done_out_Enc = 0;
     end
+    if (done_out_Dec) begin
+        done_out_Dec = 0;
+        data_out_reg = 0;
+    end
+
+    
     //reset case
     if(rst)begin
-        data_out_reg <= 0;
-        done_out_Enc <= 0;
-        done_out_Dec <= 0;
-        MOSI_next <= 0;
-        CS_enc <= 0;
-        CS_dec <= 1;
+        data_out_reg = 0;
+        done_out_Enc = 0;
+        done_out_Dec = 0;
+        MOSI_next = 0;
+        CS_enc = 0;
+        CS_dec = 1;
         i = 0;
         ik = 0;
         j = 0;
@@ -90,7 +96,13 @@ always @(negedge clk, posedge rst) begin
                 j = 0;
             end
             else begin
-                done_out_Dec <= 1;
+                done_out_Dec = 1;
+                MOSI_next = 0;
+                CS_enc = 0;
+                CS_dec = 1;
+                i = 0;
+                ik = 0;
+                j = 0;
             end
         end
     end
