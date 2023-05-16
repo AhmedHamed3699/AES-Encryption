@@ -1,4 +1,4 @@
-module ClockDivider #(parameter step=50) 
+module ClockDivider #(parameter step=20) 
 (
     input master_clk,
     output reg divide_clk
@@ -11,7 +11,7 @@ always @(posedge master_clk) begin
     if(counter == 0 && !en)
     divide_clk = 0;
 
-    if(counter == 50)
+    if(counter == step)
     begin
         divide_clk<= ~divide_clk;
         counter=0;
