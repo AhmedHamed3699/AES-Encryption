@@ -1,13 +1,15 @@
-`include "Encryption.v"
-module Encryption_tb ();
+`include"Wrapper.v"
+module Wrapper_tb();
+
 
 parameter Nk=4;
 parameter Nr=Nk+6;
 reg [127:0] data_in;
 reg [Nk*32-1:0] key_in;
-wire [127:0] data_encrypted;
+wire wrapper_out_encrypt;
+wire wrapper_out_decrypt;
+Wrapper  #(Nk,Nr) wrab(data_in,key_in,wrapper_out_encrypt,wrapper_out_decrypt);
 
-Encryption #(Nk ,Nr) E(data_in , key_in , data_encrypted);
 
 initial begin
 
@@ -17,11 +19,18 @@ key_in=128'h000102030405060708090a0b0c0d0e0f;  // 128'h69c4e0d86a7b0430d8cdb7807
 //key_in=192'h000102030405060708090a0b0c0d0e0f1011121314151617;  // 128'hdda97ca4864cdfe06eaf70a0ec0d7191
 //key_in=256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;  // 128'h8ea2b7ca516745bfeafc49904b496089
 
+
 #10
-if(data_encrypted==128'h69c4e0d86a7b0430d8cdb78070b4c55a)
-$display("Successfully Encrypted");
+if(wrapper_out_encrypt == 1'b1)
+$display("Data Successfully Encrypted");
 else
-$display("FAILEDDDDDDD");
+$display("Encryption Failedddddddd");
+#10
+if(wrapper_out_decrypt == 1'b1)
+$display("Data Successfully Decrypted");
+else
+$display("Decryption Failedddddddd");
+
 
 end
 
