@@ -4,7 +4,7 @@ module SPI_Master #(parameter Nk=4 , parameter Nr=10)(
 input clk_master,
 input rst,
 input [0:127] data_in,
-input [0:Nk*32-1]key,
+input [0:Nk*32-1]key,   
 output reg done_out_Enc,
 output reg done_out_Dec,
 output [127:0] data_out
