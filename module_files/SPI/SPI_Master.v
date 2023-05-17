@@ -40,8 +40,6 @@ end
 
 always @(negedge clk, posedge rst) begin
 
-
-
     
     //reset case
     if(rst)begin
