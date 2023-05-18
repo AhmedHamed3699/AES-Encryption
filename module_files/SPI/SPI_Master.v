@@ -11,15 +11,14 @@ output reg done_out_Dec,
 output [127:0] data_out
 );
 
-    //states of Nk_val
-    parameter Nk_4=2'b00;
-    parameter Nk_6=2'b01;
-    parameter Nk_8=2'b10;
+//states of Nk_val
+parameter Nk_4=2'b00;
+parameter Nk_6=2'b01;
+parameter Nk_8=2'b10;
 
 integer Nk;
 
 //elements passed to slave
-wire clk;
 wire MISO_Enc;
 wire MISO_Dec;
 reg MOSI_reg;
@@ -59,21 +58,12 @@ always @(negedge clk, posedge rst) begin
     else 
         Nk=8;  
 
-    if (done_out_Enc) begin
-        done_out_Enc = 0;
-    end
-    if (done_out_Dec) begin
-        done_out_Dec = 0;
-        data_out_reg = 0;
-    end
-    
     //reset case
     if(rst)begin
         data_out_reg = 0;
         done_out_Enc = 0;
         done_out_Dec = 0;
         MOSI_next = 0;
-        MOSI_reg = 0;
         CS_enc = 0;
         CS_dec = 1;
         i = 0;
@@ -82,18 +72,11 @@ always @(negedge clk, posedge rst) begin
     end
 
     else begin  
+        done_out_Enc = 0;
+        done_out_Dec = 0;
         if(i < 128)begin
             MOSI_next = data_in[i];
             i = i + 1;
-        /*    if(i==0)begin
-                if(Nk==4)
-                    ik = 128;
-                else if(Nk==6)
-                    ik = 64;  
-                else 
-                    ik = 0;       
-            end
-            */
         end
         else if (ik < 256) begin
             MOSI_next = key[ik];
@@ -106,10 +89,10 @@ always @(negedge clk, posedge rst) begin
             end
             else if(j < 132) begin
                 if(!CS_enc) begin
-                    data_out_reg = {data_out_reg[127:0], MISO_Enc};
+                    data_out_reg = {data_out_reg[126:0], MISO_Enc};
                 end
                 else if(!CS_dec) begin
-                    data_out_reg = {data_out_reg[127:0], MISO_Dec};
+                    data_out_reg = {data_out_reg[126:0], MISO_Dec};
                 end
                 else begin
                     data_out_reg = data_out_reg;
@@ -119,7 +102,7 @@ always @(negedge clk, posedge rst) begin
             else if(!CS_enc) begin
                 CS_enc <= 1;
                 CS_dec <= 0;
-                done_out_Enc <= 1; 
+                done_out_Enc = 1; 
                 i = 0;
                 ik = 0;
                 j = 0;
@@ -137,9 +120,6 @@ always @(negedge clk, posedge rst) begin
     end
 end
 
-assign data_bus = {data_in , key};
-
 assign data_out = data_out_reg;      
-  
 
 endmodule 
