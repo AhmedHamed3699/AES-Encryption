@@ -5,7 +5,7 @@ reg [1:0] Nk_val;
 reg clk_master;
 reg rst;
 reg [127:0] data_in;
-reg [255:0]key;
+reg [255:0] key;
 
 wire done_out_Enc;
 wire done_out_Dec;

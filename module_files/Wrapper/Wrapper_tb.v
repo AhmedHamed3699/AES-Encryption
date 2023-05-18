@@ -1,9 +1,6 @@
 `include"Wrapper.v"
 module Wrapper_tb();
 
-
-parameter Nk=4;
-parameter Nr=Nk+6;
 reg clk;
 reg reset;
 wire wrapper_out_encrypt;
@@ -16,23 +13,24 @@ always @(*) begin
 end
 
 initial begin
-clk = 0;
-reset=1;
 
-#20
-reset = 0;
-#10000
+    clk = 0;
+    reset = 1;
 
-    if(wrapper_out_encrypt == 1'b1)
-    $display("Data Successfully Encrypted");
-    else
-    $display("Encryption Failed");
-    if(wrapper_out_decrypt == 1'b1)
-    $display("Data Successfully Decrypted");
-    else
-    $display("Decryption Failed");
+    #20
+    reset = 0;
+    #10000
 
-$finish; 
+        if(wrapper_out_encrypt == 1'b1)
+        $display("Data Successfully Encrypted");
+        else
+        $display("Encryption Failed");
+        if(wrapper_out_decrypt == 1'b1)
+        $display("Data Successfully Decrypted");
+        else
+        $display("Decryption Failed");
+
+    $finish; 
 
 
 end
