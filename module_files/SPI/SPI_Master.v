@@ -40,14 +40,6 @@ end
 
 always @(negedge clk, posedge rst) begin
 
-    if (done_out_Enc) begin
-        done_out_Enc = 0;
-    end
-    if (done_out_Dec) begin
-        done_out_Dec = 0;
-        data_out_reg = 0;
-    end
-
     
     //reset case
     if(rst)begin
@@ -62,6 +54,8 @@ always @(negedge clk, posedge rst) begin
         j = 0;
     end
     else begin  
+        done_out_Enc = 0;
+        done_out_Dec = 0;
         if(i < 128)begin
             MOSI_next = data_in[i];
             i = i + 1;
@@ -90,7 +84,7 @@ always @(negedge clk, posedge rst) begin
             else if(!CS_enc) begin
                 CS_enc <= 1;
                 CS_dec <= 0;
-                done_out_Enc <= 1; 
+                done_out_Enc = 1; 
                 i = 0;
                 ik = 0;
                 j = 0;
@@ -107,8 +101,6 @@ always @(negedge clk, posedge rst) begin
         end
     end
 end
-
-assign data_bus = {data_in , key};
 
 assign data_out = data_out_reg;      
 

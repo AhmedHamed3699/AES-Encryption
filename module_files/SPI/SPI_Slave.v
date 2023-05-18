@@ -27,10 +27,8 @@ integer j = 0;
 
 always @(posedge clk, posedge rst) begin
 
-    if(!CS) begin
-        SDO_state = data_out[j];
-        SDI_state = SDI; 
-    end
+    SDO_state = data_out[j];
+    SDI_state = SDI; 
 
 end
 
@@ -46,11 +44,11 @@ always @(negedge clk, posedge rst) begin
     else begin
         if(!CS) begin
             if(i < 130)begin
-                data_in = {data_in[127:0], SDI_state};
+                data_in = {data_in[126:0], SDI_state};
                 i = i + 1;
             end
             else if(i < (130 + (32*Nk))) begin
-                key = {key[(32*Nk)-1:0], SDI_state};
+                key = {key[(32*Nk)-2:0], SDI_state};
                 i = i + 1;
             end
             else if (i == (130 + (32*Nk))) begin
