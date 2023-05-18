@@ -1,4 +1,3 @@
-`include "master.v"
 `include "SPI_Master.v"
 module SPI_Testbench ();
 
