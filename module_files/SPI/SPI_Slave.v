@@ -27,8 +27,14 @@ integer j = 0;
 
 always @(posedge clk, posedge rst) begin
 
-    SDO_state = data_out[j];
-    SDI_state = SDI; 
+    if(rst) begin
+        SDO_state = 0;
+        SDI_state = 0; 
+    end
+    else begin
+        SDO_state = data_out[j];
+        SDI_state = SDI;    
+    end
 
 end
 
@@ -37,7 +43,6 @@ always @(negedge clk, posedge rst) begin
         data_in <= 0;
         data_out <= 0;
         key <= 0;
-        SDO_state <= 0;
         i = 0;
         j = 0;
     end

@@ -1,7 +1,7 @@
 `include "SPI_Slave.v"
 `include "ClockDivider.v"
 module SPI_Master #(parameter Nk=4 , parameter Nr=10)(
-input clk,
+input clk_master,
 input rst,
 input [0:127] data_in,
 input [0:Nk*32-1]key,
@@ -11,6 +11,7 @@ output [127:0] data_out
 );
 
 //elements passed to slave
+wire clk;
 wire MISO_Enc;
 wire MISO_Dec;
 reg MOSI_reg;
@@ -26,7 +27,7 @@ integer ik = 0;
 integer j = 0;
 
 //calling clock divider module
-//ClockDivider C(clk_master , clk_master); 
+ClockDivider C(clk_master , clk); 
 
 //calling cipher slave
 SPI_Slave #(Nk,Nr,1) Enc_s( .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Enc), .CS(CS_enc));
