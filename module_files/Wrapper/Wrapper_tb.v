@@ -1,16 +1,14 @@
 `include"Wrapper.v"
 module Wrapper_tb();
 
-
-parameter Nk=4;
-parameter Nr=Nk+6;
 reg clk;
 reg reset;
+reg [1:0] Nk_val;
 wire wrapper_out_encrypt;
 wire wrapper_out_decrypt;
 wire done;
-Wrapper  #(Nk,Nr) wrab(clk, reset, wrapper_out_encrypt, wrapper_out_decrypt, done);
 
+Wrapper wrab(clk, reset, Nk_val, wrapper_out_encrypt ,wrapper_out_decrypt, done);
 
 always @(*) begin
     #5  clk <= ~clk;
@@ -34,12 +32,13 @@ end
 
 initial begin
     
+    reset = 1;
     clk = 0;
-    reset=1;
+    Nk_val = 2'b00;
+
 
     #20
-    reset = 0; 
-
+    reset = 0;
 
 end
 
