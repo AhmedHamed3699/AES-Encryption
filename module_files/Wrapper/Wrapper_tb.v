@@ -31,8 +31,8 @@ end
 
 initial begin
 
-    clk = 0;
     reset = 1;
+    clk = 0;
     Nk_val = 2'b00;
 
     #20

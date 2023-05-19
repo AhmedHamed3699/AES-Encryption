@@ -123,14 +123,14 @@ end
  //encryption for Nk=4 key
 Encryption #(4, 10) Enc_4(
     .data_in(data_in),
-    .key_in(key[128:255]),
+    .key_in(key[0:127]),
     .data_encrypted(data_encrypted_4)
 );
 
  //encryption for Nk=6 key
 Encryption #(6, 12) Enc_6(
     .data_in(data_in),
-    .key_in(key[64:255]),
+    .key_in(key[0:191]),
     .data_encrypted(data_encrypted_6)
 );
 
@@ -144,14 +144,14 @@ Encryption #(8, 14) Enc_8(
  //decryption for Nk=4 key
 Decryption #(4, 10) Dec_4(
     .data_in(data_in),
-    .key_in(key[128:255]),
+    .key_in(key[0:127]),
     .data_decrypted(data_decrypted_4)
 );
 
  //decryption for Nk=6 key
 Decryption #(6 , 12) Dec_6(
     .data_in(data_in),
-    .key_in(key[64:255]),
+    .key_in(key[0:191]),
     .data_decrypted(data_decrypted_6)
 );
 

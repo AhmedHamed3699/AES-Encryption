@@ -15,7 +15,7 @@ reg [0:127] data_in;
 reg [0:255] key_in;
 wire [127:0] data_out;
 
-SPI_Master SM(Nk_val , clk , rst , data_in , key_in , done_out_Enc , done_out_Dec , data_out);
+SPI_Master SM(Nk_val , clk , reset , data_in , key_in , done_out_Enc , done_out_Dec , data_out);
 
 always@(*)
 begin
@@ -24,7 +24,7 @@ begin
         wrapper_out_decrypt = 0;
         done = 0;
         data_in = 128'h00112233445566778899aabbccddeeff;
-        key_in = 256'h000102030405060708090a0b0c0d0e0f1011121314151617;
+        key_in = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
     end
 
     if(done_out_Enc)begin
@@ -59,11 +59,11 @@ begin
     end
     if (done_out_Dec) begin
         if(data_out == 128'h00112233445566778899aabbccddeeff)
-            wrapper_out_decrypt<= 1'b1;
+            wrapper_out_decrypt = 1'b1;
         else
-            wrapper_out_decrypt<=1'b0;
+            wrapper_out_decrypt = 1'b0;
 
-        done = 0;
+        done = 1;
     end
 end
 

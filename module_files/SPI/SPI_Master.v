@@ -44,7 +44,7 @@ SPI_Slave #(1) Enc_s( .Nk_val(Nk_val), .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .
 SPI_Slave #(0) Dec_s( .Nk_val(Nk_val) , .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Dec), .CS(CS_dec));
 
 always @(posedge clk, posedge rst) begin
-    MOSI_reg <= MOSI_next;
+    MOSI_reg = MOSI_next;
 end
 
 always @(negedge clk, posedge rst) begin
