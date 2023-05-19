@@ -19,6 +19,7 @@ parameter Nk_8=2'b10;
 integer Nk;
 
 //elements passed to slave
+wire clk;
 wire MISO_Enc;
 wire MISO_Dec;
 reg MOSI_reg;
@@ -33,9 +34,6 @@ integer i = 0;
 integer ik = 0;
 integer j = 0;
 
-
-
-
 //calling clock divider module
 ClockDivider C(clk_master , clk); 
 
@@ -45,7 +43,7 @@ SPI_Slave #(1) Enc_s( .Nk_val(Nk_val), .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .
 //calling inverse cipher slave
 SPI_Slave #(0) Dec_s( .Nk_val(Nk_val) , .clk(clk) ,.rst(rst) , .SDI(MOSI_reg) , .SDO(MISO_Dec), .CS(CS_dec));
 
-always @(posedge clk) begin
+always @(posedge clk, posedge rst) begin
     MOSI_reg <= MOSI_next;
 end
 
@@ -89,10 +87,10 @@ always @(negedge clk, posedge rst) begin
             end
             else if(j < 132) begin
                 if(!CS_enc) begin
-                    data_out_reg = {data_out_reg[126:0], MISO_Enc};
+                    data_out_reg = {data_out_reg[127:0], MISO_Enc};
                 end
                 else if(!CS_dec) begin
-                    data_out_reg = {data_out_reg[126:0], MISO_Dec};
+                    data_out_reg = {data_out_reg[127:0], MISO_Dec};
                 end
                 else begin
                     data_out_reg = data_out_reg;
