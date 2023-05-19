@@ -7,6 +7,7 @@ reg [1:0] Nk_val;
 wire wrapper_out_encrypt;
 wire wrapper_out_decrypt;
 wire done;
+
 Wrapper wrab(clk, reset, Nk_val, wrapper_out_encrypt ,wrapper_out_decrypt, done);
 
 always @(*) begin
@@ -30,10 +31,11 @@ always @(*) begin
 end
 
 initial begin
-
+    
     reset = 1;
     clk = 0;
     Nk_val = 2'b00;
+
 
     #20
     reset = 0;
